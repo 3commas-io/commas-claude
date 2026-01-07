@@ -1,0 +1,38 @@
+# Plugins to sync from wshobson/agents
+# https://github.com/wshobson/agents
+# One plugin name per line, comments start with #
+
+# Development & Languages
+python-development
+javascript-typescript
+backend-development
+
+# Database
+database-design
+database-migrations
+
+# DevOps & Infrastructure
+kubernetes-operations
+cicd-automation
+deployment-strategies
+cloud-infrastructure
+
+# Testing & Quality
+unit-testing
+api-testing-observability
+code-review-ai
+tdd-workflows
+debugging-toolkit
+
+# Security
+security-compliance
+security-scanning
+
+# Frontend
+frontend-mobile-development
+
+# Git & Workflows
+git-pr-workflows
+
+# Documentation
+code-documentation
