@@ -14,7 +14,8 @@ make install
 
 This creates symlinks from the repo to your `~/.claude/` directory:
 - `~/.claude/agents/commas/` ← agents
-- `~/.claude/commands/commas/` ← commands
+- `~/.claude/commands/commas/` ← commands (slash commands)
+- `~/.claude/skills/commas/` ← skills (knowledge modules)
 - `~/.claude/commas/CLAUDE.md` ← org instructions
 
 Your personal configurations remain intact.
@@ -34,7 +35,7 @@ This pulls the latest changes and updates symlinks.
 |---------|-------------|
 | `make install` | Pull latest + create symlinks (for engineers) |
 | `make link` | Create symlinks only (for maintainers testing locally) |
-| `make sync-external` | Fetch external agents from wshobson/agents |
+| `make sync-external` | Fetch external agents, commands, skills from wshobson/agents |
 | `make uninstall` | Remove all symlinks |
 | `make status` | Show installed items |
 | `make docs` | Regenerate AGENTS.md |
@@ -53,13 +54,26 @@ See **[AGENTS.md](AGENTS.md)** for the full list organized by category.
 **External ([wshobson/agents](https://github.com/wshobson/agents)):**
 - 30+ agents for Python, DevOps, databases, frontend, security, and more
 
+### Commands (Slash Commands)
+
+24 slash commands from external plugins, including:
+- `/python-scaffold` - Scaffold Python projects
+- `/tdd-red`, `/tdd-green`, `/tdd-refactor` - TDD workflow
+- `/git-workflow` - Git operations
+- See `commands/external/` for full list
+
+### Skills (Knowledge Modules)
+
+44 skills providing context and best practices:
+- Python patterns (async, testing, packaging)
+- Architecture patterns (microservices, CQRS, event sourcing)
+- DevOps (GitOps, GitHub Actions, Terraform)
+- Security (STRIDE, SAST, threat modeling)
+- See `skills/external/` for full list
+
 ### Org-Wide Instructions
 
 The file `config/CLAUDE.md` contains organization-wide instructions that are automatically imported into every engineer's Claude Code via `@~/.claude/commas/CLAUDE.md`.
-
-### Commands
-
-Coming soon.
 
 ## Contributing
 
@@ -71,7 +85,7 @@ Coming soon.
 4. Run `make docs` to update documentation
 5. Open a PR
 
-### Update external agents
+### Update external content
 
 ```bash
 # Edit the plugin list
@@ -81,6 +95,6 @@ vim config/external-agents.txt
 make sync-external
 
 # Commit changes
-git add agents/external/
-git commit -m "Update external agents"
+git add agents/external/ commands/external/ skills/external/
+git commit -m "Update external agents, commands, skills"
 ```

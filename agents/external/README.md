@@ -4,14 +4,12 @@ Vendored from [wshobson/agents](https://github.com/wshobson/agents) (MIT License
 
 | Attribute | Value |
 |-----------|-------|
-| **Last synced** | 2026-01-07 14:17 UTC |
+| **Last synced** | 2026-01-07 16:02 UTC |
 | **Source commit** | [158dafd](https://github.com/wshobson/agents/commit/158dafd) |
 | **Agents** | 46 |
 | **Plugins** | 19 |
 
 ## Updating
-
-To update these agents:
 
 ```bash
 make sync-external

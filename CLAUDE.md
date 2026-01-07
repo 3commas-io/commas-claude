@@ -13,23 +13,28 @@ commas-claude/
 ├── agents/                    # Custom 3Commas agents
 │   ├── github-pr.md
 │   ├── jira-status-report.md
-│   └── external/              # Vendored from wshobson/agents
-├── commands/                  # Custom slash commands/skills
+│   └── external/              # Vendored from wshobson/agents (~31 agents)
+├── commands/
+│   └── external/              # External slash commands (~24 commands)
+├── skills/
+│   └── external/              # External knowledge modules (~44 skills)
+│       └── {skill-name}/SKILL.md
 ├── config/
-│   ├── CLAUDE.md              # Org-wide instructions (imported into ~/.claude/CLAUDE.md)
-│   └── external-agents.txt    # List of external plugins to sync
+│   ├── CLAUDE.md              # Org-wide instructions
+│   └── external-agents.txt    # Plugins to sync
 ├── scripts/
 │   ├── generate-docs.py       # Generates AGENTS.md
-│   └── sync-external.sh       # Syncs external agents from GitHub
-├── Makefile                   # Installation automation
+│   └── sync-external.sh       # Syncs external content from GitHub
+├── Makefile
 ├── AGENTS.md                  # Auto-generated documentation
-└── README.md                  # Engineer setup instructions
+└── README.md
 ```
 
 ## Installation Targets
 
 - `~/.claude/agents/commas/` ← all agents (custom + external)
-- `~/.claude/commands/commas/` ← commands
+- `~/.claude/commands/commas/` ← commands (external)
+- `~/.claude/skills/commas/` ← skills (external)
 - `~/.claude/commas/CLAUDE.md` ← org instructions (imported via `@~/.claude/commas/CLAUDE.md`)
 
 ## Agent File Format
@@ -57,8 +62,9 @@ Step-by-step instructions for the agent.
 ```bash
 make install        # Pull + symlink (for engineers)
 make link           # Symlink only (for maintainers)
-make sync-external  # Fetch external agents from wshobson/agents
+make sync-external  # Fetch agents, commands, skills from wshobson/agents
 make docs           # Regenerate AGENTS.md
+make status         # Show installed items count
 ```
 
 ## Adding New Agents
