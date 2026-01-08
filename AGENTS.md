@@ -6,10 +6,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Agents | 33 |
+| Total Agents | 36 |
 | Custom (3Commas) | 2 |
-| External ([wshobson/agents](https://github.com/wshobson/agents)) | 31 |
-| Categories | 9 |
+| External ([wshobson/agents](https://github.com/wshobson/agents)) | 34 |
+| Categories | 10 |
 
 ## 📑 Categories
 
@@ -18,10 +18,11 @@
 - [🐍 Python](#python) (2)
 - [⚛️ Frontend](#frontend) (1)
 - [🔍 Code Quality](#code-quality) (1)
+- [⚡ Performance](#performance) (1)
 - [🎯 Orchestration](#orchestration) (1)
 - [🛡️ DevOps & Quality](#devops--quality) (2)
 - [🔧 Backend & API](#backend--api) (2)
-- [📦 Uncategorized](#uncategorized) (21)
+- [📦 Uncategorized](#uncategorized) (23)
 
 ## 📋 Quick Reference
 
@@ -32,6 +33,7 @@
 | `backend-architect` | Expert backend architect specializing in scalable API d... | 🔧 Backend & API | external |
 | `cloud-architect` | Expert cloud architect specializing in AWS/Azure/GCP mu... | 📦 Uncategorized | external |
 | `code-reviewer` | Elite code review expert specializing in modern AI-powe... | 🔍 Code Quality | external |
+| `context-manager` | Elite AI context engineering specialist mastering dynam... | 📦 Uncategorized | external |
 | `database-admin` | Expert database administrator specializing in modern cl... | 📦 Uncategorized | external |
 | `database-architect` | Expert database architect specializing in data layer de... | 📦 Uncategorized | external |
 | `database-optimizer` | Expert database optimizer specializing in modern perfor... | 📦 Uncategorized | external |
@@ -49,8 +51,10 @@
 | `javascript-pro` | Master modern JavaScript with ES6+, async patterns, and... | 📦 Uncategorized | external |
 | `jira-status-report` | specialized agent that creates concise daily status rep... | 🏢 3Commas | custom |
 | `kubernetes-architect` | Expert Kubernetes architect specializing in cloud-nativ... | 📦 Uncategorized | external |
+| `legacy-modernizer` | Refactor legacy codebases, migrate outdated frameworks,... | 📦 Uncategorized | external |
 | `mobile-developer` | Develop React Native, Flutter, or native mobile apps wi... | 📦 Uncategorized | external |
 | `network-engineer` | Expert network engineer specializing in modern cloud ne... | 📦 Uncategorized | external |
+| `performance-engineer` | Expert performance engineer specializing in modern obse... | ⚡ Performance | external |
 | `python-pro` | Master Python 3.12+ with modern features, async program... | 🐍 Python | external |
 | `security-auditor` | Expert security auditor specializing in DevSecOps, comp... | 🛡️ DevOps & Quality | external |
 | `sql-pro` | Master modern SQL with cloud-native databases, OLTP/OLA... | 📦 Uncategorized | external |
@@ -127,6 +131,16 @@
 
 ---
 
+## ⚡ Performance
+
+### performance-engineer ↗
+
+> Expert performance engineer specializing in modern observability, application optimization, and scalable system performance. Masters OpenTelemetry, distributed tracing, load testing, multi-tier caching, Core Web Vitals, and performance monitoring. Handles end-to-end optimization, real user monitoring, and scalability patterns. Use PROACTIVELY for performance optimization, observability, or scalability challenges.
+
+**Model:** `inherit` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
+
+---
+
 ## 🎯 Orchestration
 
 ### tdd-orchestrator ↗
@@ -188,6 +202,14 @@
 > Expert cloud architect specializing in AWS/Azure/GCP multi-cloud infrastructure design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost optimization, and modern architectural patterns. Masters serverless, microservices, security, compliance, and disaster recovery. Use PROACTIVELY for cloud architecture, cost optimization, migration planning, or multi-cloud strategies.
 
 **Model:** `opus` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
+
+---
+
+### context-manager ↗
+
+> Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs, and intelligent memory systems. Orchestrates context across multi-agent workflows, enterprise AI systems, and long-running projects with 2024/2025 best practices. Use PROACTIVELY for complex AI orchestration.
+
+**Model:** `inherit` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
 
 ---
 
@@ -276,6 +298,14 @@
 > Expert Kubernetes architect specializing in cloud-native infrastructure, advanced GitOps workflows (ArgoCD/Flux), and enterprise container orchestration. Masters EKS/AKS/GKE, service mesh (Istio/Linkerd), progressive delivery, multi-tenancy, and platform engineering. Handles security, observability, cost optimization, and developer experience. Use PROACTIVELY for K8s architecture, GitOps implementation, or cloud-native platform design.
 
 **Model:** `opus` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
+
+---
+
+### legacy-modernizer ↗
+
+> Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility. Use PROACTIVELY for legacy system updates, framework migrations, or technical debt reduction.
+
+**Model:** `sonnet` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
 
 ---
 

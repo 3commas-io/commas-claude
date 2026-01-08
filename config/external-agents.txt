@@ -2,10 +2,18 @@
 # https://github.com/wshobson/agents
 # One plugin name per line, comments start with #
 
+# Orchestration
+agent-orchestration
+full-stack-orchestration
+
+
 # Development & Languages
 python-development
 javascript-typescript
 backend-development
+code-refactoring
+codebase-cleanup
+developer-essentials
 
 # Database
 database-design

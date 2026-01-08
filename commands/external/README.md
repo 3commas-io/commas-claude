@@ -6,9 +6,9 @@ These are slash commands (e.g., `/python-scaffold`) from external plugins.
 
 | Attribute | Value |
 |-----------|-------|
-| **Last synced** | 2026-01-07 16:02 UTC |
+| **Last synced** | 2026-01-08 14:09 UTC |
 | **Source commit** | [158dafd](https://github.com/wshobson/agents/commit/158dafd) |
-| **Commands** | 24 |
+| **Commands** | 33 |
 
 ## Updating
 
