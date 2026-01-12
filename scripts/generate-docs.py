@@ -18,6 +18,9 @@ except ImportError:
     HAS_YAML = False
 
 
+# Custom 3Commas agents (not from external sources)
+CUSTOM_AGENTS = ["github-pr", "jira-status-report"]
+
 # Category definitions: (emoji, name, patterns)
 CATEGORIES = [
     ("🏢", "3Commas", ["github-pr", "jira-status-report"]),
@@ -103,7 +106,12 @@ def extract_triggers(content: str) -> Optional[str]:
     return None
 
 
-def parse_agent_file(filepath: Path, is_external: bool = False) -> Optional[Dict]:
+def is_custom_agent(filename: str) -> bool:
+    """Check if agent is a custom 3Commas agent."""
+    return filename in CUSTOM_AGENTS
+
+
+def parse_agent_file(filepath: Path) -> Optional[Dict]:
     """Parse a single agent file and extract metadata."""
     try:
         content = filepath.read_text(encoding='utf-8')
@@ -121,6 +129,9 @@ def parse_agent_file(filepath: Path, is_external: bool = False) -> Optional[Dict
     # Clean up name (remove file extension if present)
     if isinstance(name, str):
         name = name.replace('.md', '')
+
+    # Determine if external
+    is_external = not is_custom_agent(filepath.stem)
 
     # Get category
     emoji, category = get_category(filepath.stem)
@@ -146,30 +157,22 @@ def parse_agent_file(filepath: Path, is_external: bool = False) -> Optional[Dict
 def generate_docs(agents_dir: Path, output_file: Path):
     """Generate AGENTS.md from all agent files."""
 
-    # Parse all agents (custom)
+    # Parse all agents from flat directory
     agents = []
     for filepath in sorted(agents_dir.glob('*.md')):
-        agent = parse_agent_file(filepath, is_external=False)
+        if filepath.name == 'README.md':
+            continue
+        agent = parse_agent_file(filepath)
         if agent:
             agents.append(agent)
-
-    # Parse external agents
-    external_dir = agents_dir / 'external'
-    external_count = 0
-    if external_dir.exists():
-        for filepath in sorted(external_dir.glob('*.md')):
-            if filepath.name == 'README.md':
-                continue
-            agent = parse_agent_file(filepath, is_external=True)
-            if agent:
-                agents.append(agent)
-                external_count += 1
 
     if not agents:
         print("No agents found!")
         return
 
-    custom_count = len(agents) - external_count
+    # Count custom vs external
+    custom_count = sum(1 for a in agents if not a['is_external'])
+    external_count = sum(1 for a in agents if a['is_external'])
 
     # Group by category
     by_category = defaultdict(list)
@@ -185,13 +188,13 @@ def generate_docs(agents_dir: Path, output_file: Path):
     lines = []
 
     # Header
-    lines.append("# 🤖 3Commas Claude Agents")
+    lines.append("# 3Commas Claude Agents")
     lines.append("")
     lines.append("> **Auto-generated documentation.** Run `make docs` to update.")
     lines.append("")
 
     # Overview
-    lines.append("## 📊 Overview")
+    lines.append("## Overview")
     lines.append("")
     lines.append("| Metric | Value |")
     lines.append("|--------|-------|")
@@ -203,7 +206,7 @@ def generate_docs(agents_dir: Path, output_file: Path):
     lines.append("")
 
     # Table of Contents
-    lines.append("## 📑 Categories")
+    lines.append("## Categories")
     lines.append("")
     for emoji, category in sorted_categories:
         count = len(by_category[(emoji, category)])
@@ -212,7 +215,7 @@ def generate_docs(agents_dir: Path, output_file: Path):
     lines.append("")
 
     # Quick Reference Table
-    lines.append("## 📋 Quick Reference")
+    lines.append("## Quick Reference")
     lines.append("")
     lines.append("| Agent | Description | Category | Source |")
     lines.append("|-------|-------------|----------|--------|")
@@ -231,7 +234,7 @@ def generate_docs(agents_dir: Path, output_file: Path):
         lines.append("")
 
         for agent in sorted(category_agents, key=lambda x: x['filename']):
-            external_badge = " ↗" if agent['is_external'] else ""
+            external_badge = " (external)" if agent['is_external'] else ""
             lines.append(f"### {agent['filename']}{external_badge}")
             lines.append("")
             lines.append(f"> {agent['description']}")
@@ -258,7 +261,7 @@ def generate_docs(agents_dir: Path, output_file: Path):
     # Write output
     output_file.write_text('\n'.join(lines), encoding='utf-8')
     ext_msg = f", {external_count} external" if external_count > 0 else ""
-    print(f"✓ Generated {output_file} ({len(agents)} agents: {custom_count} custom{ext_msg})")
+    print(f"Generated {output_file} ({len(agents)} agents: {custom_count} custom{ext_msg})")
 
 
 def main():

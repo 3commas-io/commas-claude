@@ -1,0 +1,21 @@
+{
+  "name": "3commas",
+  "owner": {
+    "name": "3Commas",
+    "email": "engineering@3commas.io"
+  },
+  "metadata": {
+    "description": "3Commas Claude Code plugin",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "3commas",
+      "source": ".",
+      "description": "3Commas agents, commands, and skills",
+      "version": "1.0.0",
+      "license": "MIT",
+      "strict": false
+    }
+  ]
+}

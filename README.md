@@ -1,89 +1,74 @@
-# commas-claude
+# 3commas
 
-3Commas shared Claude Code configurations: agents, commands, and org-wide instructions.
+3Commas Claude Code plugin: agents, commands, skills, and org-wide guidelines.
 
-## Setup
+## Installation
 
-Clone this repository anywhere you like:
+Run these commands in Claude Code:
 
-```bash
-git clone git@github.com:3commas/commas-claude.git
-cd commas-claude
-make install
+```
+/plugin marketplace add 3commas/commas-claude
+/plugin install 3commas@3commas
 ```
 
-This creates symlinks from the repo to your `~/.claude/` directory:
-- `~/.claude/agents/commas/` ← agents
-- `~/.claude/commands/commas/` ← commands (slash commands)
-- `~/.claude/skills/commas/` ← skills (knowledge modules)
-- `~/.claude/commas/CLAUDE.md` ← org instructions
+### Migrating from old version
 
-Your personal configurations remain intact.
-
-## Updating
+If you previously used `make install` (symlink-based), run cleanup first:
 
 ```bash
 cd /path/to/commas-claude
-make install
+git pull
+make cleanup
 ```
 
-This pulls the latest changes and updates symlinks.
+Then install the new plugin version in Claude Code.
 
-## Commands
+### Alternative: settings.json
 
-| Command | Description |
-|---------|-------------|
-| `make install` | Pull latest + create symlinks (for engineers) |
-| `make link` | Create symlinks only (for maintainers testing locally) |
-| `make sync-external` | Fetch external agents, commands, skills from wshobson/agents |
-| `make uninstall` | Remove all symlinks |
-| `make status` | Show installed items |
-| `make docs` | Regenerate AGENTS.md |
-| `make help` | Show help |
+Or add to `~/.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "3commas": {
+      "source": { "source": "github", "repo": "3commas/commas-claude" }
+    }
+  },
+  "enabledPlugins": { "3commas@3commas": true }
+}
+```
 
 ## What's Included
 
-### Agents
+### Agents (40+)
 
-See **[AGENTS.md](AGENTS.md)** for the full list organized by category.
+See **[AGENTS.md](AGENTS.md)** for the full list.
 
 **Custom (3Commas):**
 - `github-pr` - Creates GitHub PRs with Jira integration
 - `jira-status-report` - Posts daily status reports to Jira
 
 **External ([wshobson/agents](https://github.com/wshobson/agents)):**
-- 30+ agents for Python, DevOps, databases, frontend, security, and more
+- 38+ agents for Python, DevOps, databases, frontend, security, and more
 
-### Commands (Slash Commands)
+### Commands (31)
 
-24 slash commands from external plugins, including:
-- `/python-scaffold` - Scaffold Python projects
+Slash commands including:
 - `/tdd-red`, `/tdd-green`, `/tdd-refactor` - TDD workflow
+- `/python-scaffold`, `/typescript-scaffold` - Project scaffolding
 - `/git-workflow` - Git operations
-- See `commands/external/` for full list
+- `/doc-generate` - Documentation generation
 
-### Skills (Knowledge Modules)
+### Skills (56)
 
-44 skills providing context and best practices:
+Knowledge modules for:
+- `3commas-guidelines` - Organization coding standards
 - Python patterns (async, testing, packaging)
 - Architecture patterns (microservices, CQRS, event sourcing)
 - DevOps (GitOps, GitHub Actions, Terraform)
 - Security (STRIDE, SAST, threat modeling)
-- See `skills/external/` for full list
 
-### Org-Wide Instructions
-
-The file `config/CLAUDE.md` contains organization-wide instructions that are automatically imported into every engineer's Claude Code via `@~/.claude/commas/CLAUDE.md`.
-
-## Contributing
-
-### Add a custom agent
-
-1. Create a new branch
-2. Add your agent to `agents/`
-3. Follow the existing format (YAML front matter + markdown)
-4. Run `make docs` to update documentation
-5. Open a PR
+## For Maintainers
 
 ### Update external content
 
@@ -93,8 +78,20 @@ vim config/external-agents.txt
 
 # Sync from upstream
 make sync-external
-
-# Commit changes
-git add agents/external/ commands/external/ skills/external/
-git commit -m "Update external agents, commands, skills"
 ```
+
+### Add a custom agent
+
+1. Add your agent to `agents/`
+2. Follow the existing format (YAML front matter + markdown)
+3. Run `make docs` to update documentation
+4. Open a PR
+
+### Available commands
+
+| Command | Description |
+|---------|-------------|
+| `make install` | Show installation instructions |
+| `make cleanup` | Remove old symlink-based installation |
+| `make sync-external` | Sync external content from wshobson/agents |
+| `make docs` | Regenerate AGENTS.md |

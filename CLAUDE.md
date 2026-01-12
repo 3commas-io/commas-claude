@@ -4,38 +4,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This repository contains 3Commas company-wide Claude Code configurations that are symlinked to engineers' `~/.claude/` directories via `make install`.
+This repository is a Claude Code plugin marketplace containing 3Commas custom agents, commands, and skills, plus vendored external content from wshobson/agents.
 
 ## Repository Structure
 
 ```
 commas-claude/
-├── agents/                    # Custom 3Commas agents
-│   ├── github-pr.md
-│   ├── jira-status-report.md
-│   └── external/              # Vendored from wshobson/agents (~31 agents)
-├── commands/
-│   └── external/              # External slash commands (~24 commands)
-├── skills/
-│   └── external/              # External knowledge modules (~44 skills)
-│       └── {skill-name}/SKILL.md
+├── .claude-plugin/
+│   └── marketplace.json       # Plugin marketplace definition
+├── agents/                    # ALL agents (flat structure)
+│   ├── github-pr.md           # Custom 3Commas agent
+│   ├── jira-status-report.md  # Custom 3Commas agent
+│   ├── python-pro.md          # Vendored external
+│   └── ...                    # (~40 total)
+├── commands/                  # ALL slash commands (~31)
+│   ├── tdd-red.md
+│   └── ...
+├── skills/                    # ALL skills (~56)
+│   ├── 3commas-guidelines/    # Custom 3Commas skill
+│   │   └── SKILL.md
+│   ├── api-design-principles/
+│   └── ...
 ├── config/
 │   ├── CLAUDE.md              # Org-wide instructions
-│   └── external-agents.txt    # Plugins to sync
+│   └── external-agents.txt    # Plugins to sync from wshobson/agents
 ├── scripts/
 │   ├── generate-docs.py       # Generates AGENTS.md
-│   └── sync-external.sh       # Syncs external content from GitHub
+│   └── sync-external.sh       # Syncs external content
 ├── Makefile
 ├── AGENTS.md                  # Auto-generated documentation
 └── README.md
 ```
 
-## Installation Targets
+## Installation
 
-- `~/.claude/agents/commas/` ← all agents (custom + external)
-- `~/.claude/commands/commas/` ← commands (external)
-- `~/.claude/skills/commas/` ← skills (external)
-- `~/.claude/commas/CLAUDE.md` ← org instructions (imported via `@~/.claude/commas/CLAUDE.md`)
+This repo is a Claude Code plugin. Install via:
+
+```
+/plugin marketplace add 3commas/commas-claude
+/plugin install 3commas@3commas
+```
 
 ## Agent File Format
 
@@ -60,11 +68,9 @@ Step-by-step instructions for the agent.
 ## Key Commands
 
 ```bash
-make install        # Pull + symlink (for engineers)
-make link           # Symlink only (for maintainers)
-make sync-external  # Fetch agents, commands, skills from wshobson/agents
-make docs           # Regenerate AGENTS.md
-make status         # Show installed items count
+make install        # Show installation instructions
+make sync-external  # Fetch content from wshobson/agents + regenerate docs
+make docs           # Regenerate AGENTS.md only
 ```
 
 ## Adding New Agents

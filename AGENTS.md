@@ -1,8 +1,8 @@
-# 🤖 3Commas Claude Agents
+# 3Commas Claude Agents
 
 > **Auto-generated documentation.** Run `make docs` to update.
 
-## 📊 Overview
+## Overview
 
 | Metric | Value |
 |--------|-------|
@@ -11,7 +11,7 @@
 | External ([wshobson/agents](https://github.com/wshobson/agents)) | 34 |
 | Categories | 10 |
 
-## 📑 Categories
+## Categories
 
 - [🏢 3Commas](#3commas) (2)
 - [🎸 Django](#django) (1)
@@ -24,7 +24,7 @@
 - [🔧 Backend & API](#backend--api) (2)
 - [📦 Uncategorized](#uncategorized) (23)
 
-## 📋 Quick Reference
+## Quick Reference
 
 | Agent | Description | Category | Source |
 |-------|-------------|----------|--------|
@@ -85,7 +85,7 @@
 
 ## 🎸 Django
 
-### django-pro ↗
+### django-pro (external)
 
 > Master Django 5.x with async views, DRF, Celery, and Django Channels. Build scalable web applications with proper architecture, testing, and deployment. Use PROACTIVELY for Django development, ORM optimization, or complex Django patterns.
 
@@ -95,7 +95,7 @@
 
 ## 🐍 Python
 
-### fastapi-pro ↗
+### fastapi-pro (external)
 
 > Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic V2. Master microservices, WebSockets, and modern Python async patterns. Use PROACTIVELY for FastAPI development, async optimization, or API architecture.
 
@@ -103,7 +103,7 @@
 
 ---
 
-### python-pro ↗
+### python-pro (external)
 
 > Master Python 3.12+ with modern features, async programming, performance optimization, and production-ready practices. Expert in the latest Python ecosystem including uv, ruff, pydantic, and FastAPI. Use PROACTIVELY for Python development, optimization, or advanced Python patterns.
 
@@ -113,7 +113,7 @@
 
 ## ⚛️ Frontend
 
-### frontend-developer ↗
+### frontend-developer (external)
 
 > Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture. Optimizes performance and ensures accessibility. Use PROACTIVELY when creating UI components or fixing frontend issues.
 
@@ -123,7 +123,7 @@
 
 ## 🔍 Code Quality
 
-### code-reviewer ↗
+### code-reviewer (external)
 
 > Elite code review expert specializing in modern AI-powered code analysis, security vulnerabilities, performance optimization, and production reliability. Masters static analysis tools, security scanning, and configuration review with 2024/2025 best practices. Use PROACTIVELY for code quality assurance.
 
@@ -133,7 +133,7 @@
 
 ## ⚡ Performance
 
-### performance-engineer ↗
+### performance-engineer (external)
 
 > Expert performance engineer specializing in modern observability, application optimization, and scalable system performance. Masters OpenTelemetry, distributed tracing, load testing, multi-tier caching, Core Web Vitals, and performance monitoring. Handles end-to-end optimization, real user monitoring, and scalability patterns. Use PROACTIVELY for performance optimization, observability, or scalability challenges.
 
@@ -143,7 +143,7 @@
 
 ## 🎯 Orchestration
 
-### tdd-orchestrator ↗
+### tdd-orchestrator (external)
 
 > Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices. Enforces TDD best practices across teams with AI-assisted testing and modern frameworks. Use PROACTIVELY for TDD implementation and governance.
 
@@ -153,7 +153,7 @@
 
 ## 🛡️ DevOps & Quality
 
-### devops-troubleshooter ↗
+### devops-troubleshooter (external)
 
 > Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability. Masters log analysis, distributed tracing, Kubernetes debugging, performance optimization, and root cause analysis. Handles production outages, system reliability, and preventive monitoring. Use PROACTIVELY for debugging, incident response, or system troubleshooting.
 
@@ -161,7 +161,7 @@
 
 ---
 
-### security-auditor ↗
+### security-auditor (external)
 
 > Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/OIDC), OWASP standards, cloud security, and security automation. Handles DevSecOps integration, compliance (GDPR/HIPAA/SOC2), and incident response. Use PROACTIVELY for security audits, DevSecOps, or compliance implementation.
 
@@ -171,7 +171,7 @@
 
 ## 🔧 Backend & API
 
-### api-documenter ↗
+### api-documenter (external)
 
 > Master API documentation with OpenAPI 3.1, AI-powered tools, and modern developer experience practices. Create interactive docs, generate SDKs, and build comprehensive developer portals. Use PROACTIVELY for API documentation or developer portal creation.
 
@@ -179,7 +179,7 @@
 
 ---
 
-### backend-architect ↗
+### backend-architect (external)
 
 > Expert backend architect specializing in scalable API design, microservices architecture, and distributed systems. Masters REST/GraphQL/gRPC APIs, event-driven architectures, service mesh patterns, and modern backend frameworks. Handles service boundary definition, inter-service communication, resilience patterns, and observability. Use PROACTIVELY when creating new backend services or APIs.
 
@@ -189,7 +189,7 @@
 
 ## 📦 Uncategorized
 
-### architect-review ↗
+### architect-review (external)
 
 > Master software architect specializing in modern architecture patterns, clean architecture, microservices, event-driven systems, and DDD. Reviews system designs and code changes for architectural integrity, scalability, and maintainability. Use PROACTIVELY for architectural decisions.
 
@@ -197,7 +197,7 @@
 
 ---
 
-### cloud-architect ↗
+### cloud-architect (external)
 
 > Expert cloud architect specializing in AWS/Azure/GCP multi-cloud infrastructure design, advanced IaC (Terraform/OpenTofu/CDK), FinOps cost optimization, and modern architectural patterns. Masters serverless, microservices, security, compliance, and disaster recovery. Use PROACTIVELY for cloud architecture, cost optimization, migration planning, or multi-cloud strategies.
 
@@ -205,7 +205,7 @@
 
 ---
 
-### context-manager ↗
+### context-manager (external)
 
 > Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs, and intelligent memory systems. Orchestrates context across multi-agent workflows, enterprise AI systems, and long-running projects with 2024/2025 best practices. Use PROACTIVELY for complex AI orchestration.
 
@@ -213,7 +213,7 @@
 
 ---
 
-### database-admin ↗
+### database-admin (external)
 
 > Expert database administrator specializing in modern cloud databases, automation, and reliability engineering. Masters AWS/Azure/GCP database services, Infrastructure as Code, high availability, disaster recovery, performance optimization, and compliance. Handles multi-cloud strategies, container databases, and cost optimization. Use PROACTIVELY for database architecture, operations, or reliability engineering.
 
@@ -221,7 +221,7 @@
 
 ---
 
-### database-architect ↗
+### database-architect (external)
 
 > Expert database architect specializing in data layer design from scratch, technology selection, schema modeling, and scalable database architectures. Masters SQL/NoSQL/TimeSeries database selection, normalization strategies, migration planning, and performance-first design. Handles both greenfield architectures and re-architecture of existing systems. Use PROACTIVELY for database architecture, technology selection, or data modeling decisions.
 
@@ -229,7 +229,7 @@
 
 ---
 
-### database-optimizer ↗
+### database-optimizer (external)
 
 > Expert database optimizer specializing in modern performance tuning, query optimization, and scalable architectures. Masters advanced indexing, N+1 resolution, multi-tier caching, partitioning strategies, and cloud database optimization. Handles complex query analysis, migration strategies, and performance monitoring. Use PROACTIVELY for database optimization, performance issues, or scalability challenges.
 
@@ -237,7 +237,7 @@
 
 ---
 
-### debugger ↗
+### debugger (external)
 
 > Debugging specialist for errors, test failures, and unexpected behavior. Use proactively when encountering any issues.
 
@@ -245,7 +245,7 @@
 
 ---
 
-### deployment-engineer ↗
+### deployment-engineer (external)
 
 > Expert deployment engineer specializing in modern CI/CD pipelines, GitOps workflows, and advanced deployment automation. Masters GitHub Actions, ArgoCD/Flux, progressive delivery, container security, and platform engineering. Handles zero-downtime deployments, security scanning, and developer experience optimization. Use PROACTIVELY for CI/CD design, GitOps implementation, or deployment automation.
 
@@ -253,7 +253,7 @@
 
 ---
 
-### docs-architect ↗
+### docs-architect (external)
 
 > Creates comprehensive technical documentation from existing codebases. Analyzes architecture, design patterns, and implementation details to produce long-form technical manuals and ebooks. Use PROACTIVELY for system documentation, architecture guides, or technical deep-dives.
 
@@ -261,7 +261,7 @@
 
 ---
 
-### dx-optimizer ↗
+### dx-optimizer (external)
 
 > Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new projects, after team feedback, or when development friction is noticed.
 
@@ -269,7 +269,7 @@
 
 ---
 
-### graphql-architect ↗
+### graphql-architect (external)
 
 > Master modern GraphQL with federation, performance optimization, and enterprise security. Build scalable schemas, implement advanced caching, and design real-time systems. Use PROACTIVELY for GraphQL architecture or performance optimization.
 
@@ -277,7 +277,7 @@
 
 ---
 
-### hybrid-cloud-architect ↗
+### hybrid-cloud-architect (external)
 
 > Expert hybrid cloud architect specializing in complex multi-cloud solutions across AWS/Azure/GCP and private clouds (OpenStack/VMware). Masters hybrid connectivity, workload placement optimization, edge computing, and cross-cloud automation. Handles compliance, cost optimization, disaster recovery, and migration strategies. Use PROACTIVELY for hybrid architecture, multi-cloud strategy, or complex infrastructure integration.
 
@@ -285,7 +285,7 @@
 
 ---
 
-### javascript-pro ↗
+### javascript-pro (external)
 
 > Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node compatibility. Use PROACTIVELY for JavaScript optimization, async debugging, or complex JS patterns.
 
@@ -293,7 +293,7 @@
 
 ---
 
-### kubernetes-architect ↗
+### kubernetes-architect (external)
 
 > Expert Kubernetes architect specializing in cloud-native infrastructure, advanced GitOps workflows (ArgoCD/Flux), and enterprise container orchestration. Masters EKS/AKS/GKE, service mesh (Istio/Linkerd), progressive delivery, multi-tenancy, and platform engineering. Handles security, observability, cost optimization, and developer experience. Use PROACTIVELY for K8s architecture, GitOps implementation, or cloud-native platform design.
 
@@ -301,7 +301,7 @@
 
 ---
 
-### legacy-modernizer ↗
+### legacy-modernizer (external)
 
 > Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical debt, dependency updates, and backward compatibility. Use PROACTIVELY for legacy system updates, framework migrations, or technical debt reduction.
 
@@ -309,7 +309,7 @@
 
 ---
 
-### mobile-developer ↗
+### mobile-developer (external)
 
 > Develop React Native, Flutter, or native mobile apps with modern architecture patterns. Masters cross-platform development, native integrations, offline sync, and app store optimization. Use PROACTIVELY for mobile features, cross-platform code, or app optimization.
 
@@ -317,7 +317,7 @@
 
 ---
 
-### network-engineer ↗
+### network-engineer (external)
 
 > Expert network engineer specializing in modern cloud networking, security architectures, and performance optimization. Masters multi-cloud connectivity, service mesh, zero-trust networking, SSL/TLS, global load balancing, and advanced troubleshooting. Handles CDN optimization, network automation, and compliance. Use PROACTIVELY for network design, connectivity issues, or performance optimization.
 
@@ -325,7 +325,7 @@
 
 ---
 
-### sql-pro ↗
+### sql-pro (external)
 
 > Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert in performance tuning, data modeling, and hybrid analytical systems. Use PROACTIVELY for database optimization or complex analysis.
 
@@ -333,7 +333,7 @@
 
 ---
 
-### temporal-python-pro ↗
+### temporal-python-pro (external)
 
 > Master Temporal workflow orchestration with Python SDK. Implements durable workflows, saga patterns, and distributed transactions. Covers async/await, testing strategies, and production deployment. Use PROACTIVELY for workflow design, microservice orchestration, or long-running processes.
 
@@ -341,7 +341,7 @@
 
 ---
 
-### terraform-specialist ↗
+### terraform-specialist (external)
 
 > Expert Terraform/OpenTofu specialist mastering advanced IaC automation, state management, and enterprise infrastructure patterns. Handles complex module design, multi-cloud deployments, GitOps workflows, policy as code, and CI/CD integration. Covers migration strategies, security best practices, and modern IaC ecosystems. Use PROACTIVELY for advanced IaC, state management, or infrastructure automation.
 
@@ -349,7 +349,7 @@
 
 ---
 
-### test-automator ↗
+### test-automator (external)
 
 > Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with advanced CI/CD integration. Use PROACTIVELY for testing automation or quality assurance.
 
@@ -357,7 +357,7 @@
 
 ---
 
-### tutorial-engineer ↗
+### tutorial-engineer (external)
 
 > Creates step-by-step tutorials and educational content from code. Transforms complex concepts into progressive learning experiences with hands-on examples. Use PROACTIVELY for onboarding guides, feature tutorials, or concept explanations.
 
@@ -365,7 +365,7 @@
 
 ---
 
-### typescript-pro ↗
+### typescript-pro (external)
 
 > Master TypeScript with advanced types, generics, and strict type safety. Handles complex type systems, decorators, and enterprise-grade patterns. Use PROACTIVELY for TypeScript architecture, type inference optimization, or advanced typing patterns.
 
