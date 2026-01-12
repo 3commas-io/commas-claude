@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "3commas",
-      "source": ".",
+      "source": "./",
       "description": "3Commas agents, commands, and skills",
       "version": "1.0.0",
       "license": "MIT",
