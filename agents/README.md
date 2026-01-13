@@ -1,45 +1,24 @@
-# External Agents
+# Agents
 
-Vendored from [wshobson/agents](https://github.com/wshobson/agents) (MIT License).
+This directory contains Claude Code agents from two sources:
+
+## Custom 3Commas Agents
+- `github-pr.md` - GitHub PR creation agent
+- `jira-status-report.md` - Jira status reporting agent
+
+## Vendored External Agents (56)
+
+Synced from [wshobson/agents](https://github.com/wshobson/agents) (MIT License).
 
 | Attribute | Value |
 |-----------|-------|
-| **Last synced** | 2026-01-08 14:09 UTC |
-| **Source commit** | [158dafd](https://github.com/wshobson/agents/commit/158dafd) |
-| **Agents** | 56 |
-| **Plugins** | 24 |
+| **Last synced** | 2026-01-13 12:14 UTC |
+| **Source commit** | [2d769d4](https://github.com/wshobson/agents/commit/2d769d4) |
 
-## Updating
+### Updating
 
 ```bash
 make sync-external
 ```
 
 To add/remove plugins, edit `config/external-agents.txt` and re-run sync.
-
-## Included Plugins
-
-- agent-orchestration
-- full-stack-orchestration
-- python-development
-- javascript-typescript
-- backend-development
-- code-refactoring
-- codebase-cleanup
-- developer-essentials
-- database-design
-- database-migrations
-- kubernetes-operations
-- cicd-automation
-- deployment-strategies
-- cloud-infrastructure
-- unit-testing
-- api-testing-observability
-- code-review-ai
-- tdd-workflows
-- debugging-toolkit
-- security-compliance
-- security-scanning
-- frontend-mobile-development
-- git-pr-workflows
-- code-documentation

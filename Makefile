@@ -22,7 +22,7 @@ help:
 	@echo ""
 	@echo "This repo is a Claude Code plugin. Install via:"
 	@echo ""
-	@echo "  /plugin marketplace add 3commas/commas-claude"
+	@echo "  /plugin marketplace add 3commas-io/commas-claude"
 	@echo "  /plugin install 3commas@3commas"
 
 install:
@@ -32,7 +32,7 @@ install:
 	@echo ""
 	@echo "Step 1: Add the marketplace (run in Claude Code):"
 	@echo ""
-	@echo "  /plugin marketplace add 3commas/commas-claude"
+	@echo "  /plugin marketplace add 3commas-io/commas-claude"
 	@echo ""
 	@echo "Step 2: Install the plugin:"
 	@echo ""
@@ -45,7 +45,7 @@ install:
 	@echo '  {'
 	@echo '    "extraKnownMarketplaces": {'
 	@echo '      "3commas": {'
-	@echo '        "source": { "source": "github", "repo": "3commas/commas-claude" }'
+	@echo '        "source": { "source": "github", "repo": "3commas-io/commas-claude" }'
 	@echo '      }'
 	@echo '    },'
 	@echo '    "enabledPlugins": { "3commas@3commas": true }'
@@ -96,5 +96,5 @@ cleanup:
 	@echo ""
 	@echo "Cleanup complete. Now install the new plugin version:"
 	@echo ""
-	@echo "  /plugin marketplace add 3commas/commas-claude"
+	@echo "  /plugin marketplace add 3commas-io/commas-claude"
 	@echo "  /plugin install 3commas@3commas"
