@@ -41,7 +41,7 @@ commas-claude/
 This repo is a Claude Code plugin. Install via:
 
 ```
-/plugin marketplace add 3commas/commas-claude
+/plugin marketplace add 3commas-io/commas-claude
 /plugin install 3commas@3commas
 ```
 

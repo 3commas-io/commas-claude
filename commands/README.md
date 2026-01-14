@@ -1,13 +1,11 @@
-# External Commands
+# Commands
 
-Vendored from [wshobson/agents](https://github.com/wshobson/agents) (MIT License).
-
-These are slash commands (e.g., `/python-scaffold`) from external plugins.
+Slash commands (e.g., `/tdd-red`) vendored from [wshobson/agents](https://github.com/wshobson/agents) (MIT License).
 
 | Attribute | Value |
 |-----------|-------|
-| **Last synced** | 2026-01-08 14:09 UTC |
-| **Source commit** | [158dafd](https://github.com/wshobson/agents/commit/158dafd) |
+| **Last synced** | 2026-01-13 12:14 UTC |
+| **Source commit** | [2d769d4](https://github.com/wshobson/agents/commit/2d769d4) |
 | **Commands** | 33 |
 
 ## Updating

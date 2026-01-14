@@ -7,7 +7,7 @@
 Run these commands in Claude Code:
 
 ```
-/plugin marketplace add 3commas/commas-claude
+/plugin marketplace add 3commas-io/commas-claude
 /plugin install 3commas@3commas
 ```
 
@@ -31,7 +31,7 @@ Or add to `~/.claude/settings.json`:
 {
   "extraKnownMarketplaces": {
     "3commas": {
-      "source": { "source": "github", "repo": "3commas/commas-claude" }
+      "source": { "source": "github", "repo": "3commas-io/commas-claude" }
     }
   },
   "enabledPlugins": { "3commas@3commas": true }
@@ -51,7 +51,7 @@ See **[AGENTS.md](AGENTS.md)** for the full list.
 **External ([wshobson/agents](https://github.com/wshobson/agents)):**
 - 38+ agents for Python, DevOps, databases, frontend, security, and more
 
-### Commands (31)
+### Commands (32)
 
 Slash commands including:
 - `/tdd-red`, `/tdd-green`, `/tdd-refactor` - TDD workflow
@@ -59,7 +59,7 @@ Slash commands including:
 - `/git-workflow` - Git operations
 - `/doc-generate` - Documentation generation
 
-### Skills (56)
+### Skills (57)
 
 Knowledge modules for:
 - `3commas-guidelines` - Organization coding standards
@@ -79,6 +79,8 @@ vim config/external-agents.txt
 # Sync from upstream
 make sync-external
 ```
+
+> **Note:** Some external agents from wshobson/agents may lack YAML front matter and won't appear in the generated `AGENTS.md`. These agents still work but aren't documented. To fix, submit a PR upstream to add front matter.
 
 ### Add a custom agent
 
