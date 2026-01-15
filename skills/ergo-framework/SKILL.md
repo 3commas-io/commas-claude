@@ -639,6 +639,13 @@ func (a *Gateway) callService(request any) (any, error) {
 7. **Registrar Selection**: Embedded for dev, etcd for 50-70 nodes, Saturn for 1000+
 8. **Meta Processes**: Use for blocking I/O (TCP, HTTP), not for business logic
 
+## Reference
+
+When uncertain about APIs or behavior, consult the Ergo Framework source code and `/docs` directory in Go module cache:
+```bash
+ls $(go env GOMODCACHE)/ergo.services/ergo@*/docs/
+```
+
 ## Common Pitfalls
 
 - **Blocking in Callbacks**: NEVER use mutexes, channels, or blocking I/O in actors
