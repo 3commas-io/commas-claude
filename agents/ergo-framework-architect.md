@@ -1,5 +1,5 @@
 ---
-name: ergo-architect
+name: ergo-framework-architect
 description: Expert architect for Ergo Framework actor-based distributed systems. Designs applications with DDD bounded contexts, cluster topology, supervision strategies, message isolation levels, and network transparency patterns. Use PROACTIVELY for Ergo Framework design, actor architecture, distributed systems, or when implementing fault-tolerant applications with the Ergo actor model.
 model: opus
 ---
