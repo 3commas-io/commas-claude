@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "3Commas Claude Code plugin",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "3commas",
       "source": "./",
       "description": "3Commas agents, commands, and skills",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "license": "MIT",
       "strict": false
     }
