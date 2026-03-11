@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "staging": {
+      "type": "http",
+      "url": "https://eck-mcp.stg.3csb.com/mcp"
+    }
+  }
+}
