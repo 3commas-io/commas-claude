@@ -40,7 +40,7 @@ Or add to `~/.claude/settings.json`:
 
 ## What's Included
 
-### Agents (40+)
+### Agents (43)
 
 See **[AGENTS.md](AGENTS.md)** for the full list.
 
@@ -49,7 +49,7 @@ See **[AGENTS.md](AGENTS.md)** for the full list.
 - `jira-status-report` - Posts daily status reports to Jira
 
 **External ([wshobson/agents](https://github.com/wshobson/agents)):**
-- 38+ agents for Python, DevOps, databases, frontend, security, and more
+- 40+ agents for Python, DevOps, databases, frontend, security, and more
 
 ### Commands (32)
 
@@ -59,10 +59,15 @@ Slash commands including:
 - `/git-workflow` - Git operations
 - `/doc-generate` - Documentation generation
 
-### Skills (58)
+### Skills (64)
 
 Knowledge modules for:
 - `release-notes` - Generate business-level release note digests from Jira + GitHub, post to Slack
+- `write-tech-design` - Write technical design documents
+- `ship` - Ship workflow (commit, push, PR)
+- `notion-docs` - Generate and push documentation to Notion
+- `jira-report` - Generate Jira status reports
+- `optimize-claude-md` - Optimize CLAUDE.md files
 - `3commas-guidelines` - Organization coding standards
 - Python patterns (async, testing, packaging)
 - Architecture patterns (microservices, CQRS, event sourcing)
