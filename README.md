@@ -64,7 +64,7 @@ Slash commands including:
 Knowledge modules for:
 - `release-notes` - Generate business-level release note digests from Jira + GitHub, post to Slack
 - `write-tech-design` - Write technical design documents
-- `ship` - Ship workflow (commit, push, PR)
+- `ship` - Create a PR, capture a Claude Impact Score comment on it, then post a JIRA summary
 - `notion-docs` - Generate and push documentation to Notion
 - `jira-report` - Generate Jira status reports
 - `optimize-claude-md` - Optimize CLAUDE.md files
