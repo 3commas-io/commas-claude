@@ -139,7 +139,24 @@ Rate Claude's impact on this PR:
   -3  Claude wasted your time. You'd have been faster without it.
 ```
 
-Then ask: **"What's your Claude Impact Score for this PR?"**
+### Propose a score and justification based on session context
+
+Before asking the user, synthesize what actually happened in this session and offer a draft:
+
+- **Suggested score**: look at how much of the diff Claude produced vs. edited-after-Claude, how many course-corrections the user made, whether the user expressed frustration or satisfaction, whether generated code required significant rework. Pick a starting score.
+- **Suggested justification** (one line): summarise what Claude actually did for this PR — the concrete thing, not a category. Examples: "Claude drafted the new component and tests; I adjusted the RTK Query cache tags", "Claude proposed the migration but got transaction boundaries wrong twice".
+
+Present it like:
+
+```
+Based on this session:
+  Score: 2
+  Justification: Claude drafted the new component and tests; I adjusted the RTK Query cache tags.
+
+What's your Claude Impact Score for this PR? (accept / different score / edit justification)
+```
+
+If there's no useful context (e.g., user ran `/ship` in a fresh session), skip the draft and just ask for the score.
 
 ### Validate
 
@@ -147,15 +164,24 @@ Then ask: **"What's your Claude Impact Score for this PR?"**
 - Must be in range `-3..+3` inclusive
 - If invalid, re-prompt with a one-line reminder of the valid range
 
-Negative scores are valid and expected. Do not nudge the user upward — honest data is the point.
+Negative scores are valid and expected. Do not nudge the user upward — honest data is the point. The suggested score is a draft; always accept what the user types without pushing back.
 
 ### Post the comment
+
+Post the `CLAUDE: X` line on its own, then append the justification (if any) on the next line:
+
+```bash
+gh pr comment <pr-number> --body "CLAUDE: <score>
+<justification>"
+```
+
+If the user declined the justification, post just the score line:
 
 ```bash
 gh pr comment <pr-number> --body "CLAUDE: <score>"
 ```
 
-The comment must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. Do not wrap it, prefix it, or add other text on the same line.
+The `CLAUDE: X` line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. The justification goes on a separate line so it doesn't confuse the regex.
 
 Confirm to the user: `✓ Posted CLAUDE: <score> on <pr-url>`
 
