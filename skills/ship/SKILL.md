@@ -1,11 +1,11 @@
 ---
 name: ship
-description: Create a GitHub PR and post a work summary to the JIRA issue. Handles the full ship workflow — gather context, create PR, post JIRA comment. Can be extended with project-specific team members and JIRA configuration.
+description: Create a GitHub PR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Handles the full ship workflow — gather context, create PR, prompt for Claude Impact Score, post JIRA comment. Can be extended with project-specific team members and JIRA configuration.
 ---
 
 # Ship Skill
 
-Create a GitHub PR and post a work summary to the JIRA issue. PR is always created first, then JIRA summary references it.
+Create a GitHub PR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Order: PR first, then Claude Impact Score comment on the PR, then JIRA summary that references the PR.
 
 ## When to Use
 
@@ -18,6 +18,8 @@ Create a GitHub PR and post a work summary to the JIRA issue. PR is always creat
 Optional arguments override auto-detection:
 - `--reviewer <name>` or `-r <name>` — override reviewer (partial name match against team list)
 - `--assignee <name>` or `-a <name>` — override assignee
+- `--claude-score <N>` or `--score <N>` — pre-set the Claude Impact Score (skips the interactive prompt). Must be an integer in `-3..+3`.
+- `--no-claude-score` — skip the Claude Impact Score prompt entirely. CI will fail the PR until a `CLAUDE: X` comment is added manually.
 - `--no-jira` — skip JIRA summary
 - `--no-pr` — skip PR creation (only post JIRA summary)
 - Bare argument — treated as JIRA issue key if it matches the project pattern
@@ -110,9 +112,91 @@ Push the branch first if it hasn't been pushed or is behind remote:
 git push -u origin <branch-name>
 ```
 
-Save the PR URL from the output for the JIRA step.
+Save the PR URL and number from the output — both are needed for the next steps.
 
-## Step 4 — Post JIRA Summary
+## Step 4 — Ask for Claude Impact Score
+
+Every PR must carry a Claude Impact Score: a single integer from **-3** to **+3** that captures how much Claude contributed to the work. CI enforces this on every PR, so posting it here avoids a CI failure and a bot reminder comment.
+
+### Skip this step if
+
+- User passed `--no-claude-score` — warn and continue (see below)
+- User passed `--claude-score <N>` / `--score <N>` — validate `N` is an integer in `-3..+3`, then skip the prompt and go straight to "Post the comment"
+
+### Display the scale
+
+Show this compact table, then ask for a score:
+
+```
+Rate Claude's impact on this PR:
+
+   3  Claude did all the work. You reviewed and made tiny or no adjustments.
+   2  Claude did most of the work. You guided it, it delivered.
+   1  Claude helped with specific parts, but you did most of the work.
+   0  Claude was not used on this task at all.
+  -1  Claude's suggestions needed significant rework.
+  -2  Claude actively hindered progress in places.
+  -3  Claude wasted your time. You'd have been faster without it.
+```
+
+### Propose a score and justification based on session context
+
+Before asking the user, synthesize what actually happened in this session and offer a draft:
+
+- **Suggested score**: look at how much of the diff Claude produced vs. edited-after-Claude, how many course-corrections the user made, whether the user expressed frustration or satisfaction, whether generated code required significant rework. Pick a starting score.
+- **Suggested justification** (one line): summarise what Claude actually did for this PR — the concrete thing, not a category. Examples: "Claude drafted the new component and tests; I adjusted the RTK Query cache tags", "Claude proposed the migration but got transaction boundaries wrong twice".
+
+Present it like:
+
+```
+Based on this session:
+  Score: 2
+  Justification: Claude drafted the new component and tests; I adjusted the RTK Query cache tags.
+
+What's your Claude Impact Score for this PR? (accept / different score / edit justification)
+```
+
+If there's no useful context (e.g., user ran `/ship` in a fresh session), skip the draft and just ask for the score.
+
+### Validate
+
+- Must be an integer
+- Must be in range `-3..+3` inclusive
+- If invalid, re-prompt with a one-line reminder of the valid range
+
+Negative scores are valid and expected. Do not nudge the user upward — honest data is the point. The suggested score is a draft; always accept what the user types without pushing back.
+
+### Post the comment
+
+Post the `CLAUDE: X` line on its own, then append the justification (if any) on the next line:
+
+```bash
+gh pr comment <pr-number> --body "CLAUDE: <score>
+<justification>"
+```
+
+If the user declined the justification, post just the score line:
+
+```bash
+gh pr comment <pr-number> --body "CLAUDE: <score>"
+```
+
+The `CLAUDE: X` line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. The justification goes on a separate line so it doesn't confuse the regex.
+
+Confirm to the user: `✓ Posted CLAUDE: <score> on <pr-url>`
+
+### If the user declines or skips
+
+If the user says "skip", "no", or passed `--no-claude-score`, show this warning and continue the workflow:
+
+```
+⚠️  No Claude Impact Score posted.
+   CI will fail this PR until a CLAUDE: X comment is added.
+   Post it manually with:
+     gh pr comment <pr-number> --body "CLAUDE: <score>"
+```
+
+## Step 5 — Post JIRA Summary
 
 Use `mcp__atlassian__getAccessibleAtlassianResources` to get the cloud ID, then `mcp__atlassian__addCommentToJiraIssue` to post.
 
@@ -144,11 +228,12 @@ Keep it concise. Focus on what was accomplished, not every detail.
 2. Tell them to post it manually
 3. Suggest running `/mcp` to reconnect
 
-## Step 5 — Report Results
+## Step 6 — Report Results
 
 Output a summary:
 ```
 PR: <url>
+Claude Impact Score: <score> posted (or "skipped — post manually")
 JIRA: PROJ-XXX comment posted (or "manual post needed")
 Assignee: <name>
 Reviewer: <name>
@@ -167,5 +252,6 @@ Reviewer: <name>
 - NEVER amend commits
 - NEVER skip pre-commit hooks
 - Always push before creating the PR
-- PR creation comes BEFORE JIRA summary (JIRA needs the PR link)
+- Order is fixed: PR → Claude Impact Score comment → JIRA summary. Each later step depends on the PR URL / number.
+- The Claude Impact Score comment must be posted on the PR (GitHub) or MR (GitLab), not on a specific code line — CI only scans PR-level comments and the PR description.
 - Don't include sensitive info (API keys, tokens) in PR or JIRA
