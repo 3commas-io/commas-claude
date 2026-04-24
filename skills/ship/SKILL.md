@@ -1,11 +1,13 @@
 ---
 name: ship
-description: Create a GitHub PR or GitLab MR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Handles the full ship workflow — gather context, create PR/MR, prompt for Claude Impact Score, post JIRA comment. Works with both github.com (via `gh`) and GitLab instances (via `glab`). Can be extended with project-specific team members and JIRA configuration.
+description: Create a GitHub PR or GitLab MR with a Claude Impact Score baked into the description, then post a work summary to the JIRA issue. Handles the full ship workflow — gather context, prompt for Claude Impact Score, create PR/MR with the score in the body, post JIRA comment. Works with both github.com (via `gh`) and GitLab instances (via `glab`). Can be extended with project-specific team members and JIRA configuration.
 ---
 
 # Ship Skill
 
-Create a GitHub PR or GitLab MR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Order: PR/MR first, then Claude Impact Score comment, then JIRA summary that references the PR/MR.
+Create a GitHub PR or GitLab MR with a Claude Impact Score embedded in the description, then post a work summary to the JIRA issue.
+
+**Score goes in the PR/MR description, not a comment.** That way CI runs once on `pull_request: opened` / `merge_request: open`, sees the score in the body, and passes — no separate comment, no re-trigger churn, no waiting for `issue_comment`-driven workflow to catch up.
 
 Platform is auto-detected from the `origin` remote — github.com → GitHub path (`gh` CLI), any `gitlab.*` host → GitLab path (`glab` CLI).
 
@@ -21,7 +23,7 @@ Optional arguments override auto-detection:
 - `--reviewer <name>` or `-r <name>` — override reviewer (partial name match against team list)
 - `--assignee <name>` or `-a <name>` — override assignee
 - `--claude-score <N>` or `--score <N>` — pre-set the Claude Impact Score (skips the interactive prompt). Must be an integer in `-3..+3`.
-- `--no-claude-score` — skip the Claude Impact Score prompt entirely. CI will fail the PR/MR until a `CLAUDE: X` comment is added manually.
+- `--no-claude-score` — skip the Claude Impact Score prompt entirely. CI will fail the PR/MR until a `CLAUDE: X` is added to the description or a comment.
 - `--no-jira` — skip JIRA summary
 - `--no-pr` — skip PR/MR creation (only post JIRA summary)
 - `--platform <github|gitlab>` — force platform detection (rarely needed; use only if auto-detection picks the wrong one)
@@ -55,7 +57,7 @@ case "$REMOTE_URL" in
 esac
 ```
 
-If the user passed `--platform`, use that instead. The rest of the skill branches on `$PLATFORM`.
+If the user passed `--platform`, use that instead.
 
 Also confirm the matching CLI is installed and authenticated:
 
@@ -90,89 +92,14 @@ If `git status` shows uncommitted changes:
 - Ask if they want to commit first or proceed without those changes
 - Do NOT auto-commit
 
-## Step 3 — Create the PR/MR
+## Step 3 — Ask for the Claude Impact Score
 
-### Determine assignee and reviewer
-
-- **Assignee**: Default to current login. Resolve via `gh api user` (GitHub) or `glab api user` (GitLab). Override with `--assignee` or if user says "assign to X".
-- **Reviewer**: If not specified, pick the most likely reviewer from the team list (not the assignee). Override with `--reviewer`.
-
-### Build PR/MR content
-
-Analyze ALL commits on the branch (`git log main..HEAD`) and the full diff (`git diff main...HEAD`).
-
-**PR/MR title**: Short (under 70 chars), imperative mood. Prefix with JIRA key: `PROJ-XXX: <description>`.
-
-**PR/MR body** format:
-
-```markdown
-[PROJ-XXX](<jira-browse-url>/PROJ-XXX)
-
-## Summary
-- [2-4 bullet points describing what changed and why]
-
-## Changes
-- **Created**: [new files]
-- **Modified**: [changed files]
-- **Deleted**: [removed files]
-
-## Test plan
-- [ ] [Verification steps]
-```
-
-The first line must always be the Jira issue link using the key extracted from the branch name.
-
-### Push the branch first
-
-Before creating the PR/MR, make sure the branch is on the remote:
-
-```bash
-git push -u origin <branch-name>
-```
-
-### Create the PR/MR
-
-**GitHub** (`$PLATFORM = github`):
-
-```bash
-gh pr create \
-  --title "PROJ-XXX: <title>" \
-  --assignee <github-username> \
-  --reviewer <github-username> \
-  --body "$(cat <<'EOF'
-<body content>
-EOF
-)"
-```
-
-**GitLab** (`$PLATFORM = gitlab`):
-
-```bash
-glab mr create \
-  --title "PROJ-XXX: <title>" \
-  --assignee <gitlab-username> \
-  --reviewer <gitlab-username> \
-  --source-branch "$(git branch --show-current)" \
-  --target-branch main \
-  --remove-source-branch \
-  --description "$(cat <<'EOF'
-<body content>
-EOF
-)"
-```
-
-(On GitLab, swap `main` for the actual default branch if different — e.g., `master`, `develop`.)
-
-Save the PR/MR URL and its number/iid from the output — both are needed for the next steps.
-
-## Step 4 — Ask for Claude Impact Score
-
-Every PR/MR must carry a Claude Impact Score: a single integer from **-3** to **+3** that captures how much Claude contributed to the work. CI enforces this on every PR/MR, so posting it here avoids a CI failure and a bot reminder comment.
+**This step runs BEFORE the PR/MR is created** so the score can go into the description and CI passes on the first run.
 
 ### Skip this step if
 
 - User passed `--no-claude-score` — warn and continue (see below)
-- User passed `--claude-score <N>` / `--score <N>` — validate `N` is an integer in `-3..+3`, then skip the prompt and go straight to "Post the comment"
+- User passed `--claude-score <N>` / `--score <N>` — validate `N` is an integer in `-3..+3`, then use it directly
 
 ### Display the scale
 
@@ -217,50 +144,113 @@ If there's no useful context (e.g., user ran `/ship` in a fresh session), skip t
 
 Negative scores are valid and expected. Do not nudge the user upward — honest data is the point. The suggested score is a draft; always accept what the user types without pushing back.
 
-### Post the comment
+### If the user declines or skips
 
-Post the `CLAUDE: X` line on its own, then append the justification (if any) on the next line.
+If the user says "skip", "no", or passed `--no-claude-score`, show this warning:
+
+```
+⚠️  No Claude Impact Score will be in the description.
+   CI will fail this PR/MR until a CLAUDE: X is added (body or comment).
+   You can add it after the PR/MR is created with:
+     # GitHub
+     gh pr edit <pr-number> --body '<new body including CLAUDE: X>'
+     gh pr comment <pr-number> --body "CLAUDE: <score>"
+     # GitLab
+     glab mr update <mr-iid> --description '<new description including CLAUDE: X>'
+     glab mr note <mr-iid> --message "CLAUDE: <score>"
+```
+
+…and continue to Step 4 without a score in the body.
+
+## Step 4 — Create the PR/MR (with score baked in)
+
+### Determine assignee and reviewer
+
+- **Assignee**: Default to current login. Resolve via `gh api user` (GitHub) or `glab api user` (GitLab). Override with `--assignee` or if user says "assign to X".
+- **Reviewer**: If not specified, pick the most likely reviewer from the team list (not the assignee). Override with `--reviewer`.
+
+### Build PR/MR content
+
+Analyze ALL commits on the branch (`git log main..HEAD`) and the full diff (`git diff main...HEAD`).
+
+**PR/MR title**: Short (under 70 chars), imperative mood. Prefix with JIRA key: `PROJ-XXX: <description>`.
+
+**PR/MR body** format (Claude Impact Score appears as the last block on its own lines):
+
+```markdown
+[PROJ-XXX](<jira-browse-url>/PROJ-XXX)
+
+## Summary
+- [2-4 bullet points describing what changed and why]
+
+## Changes
+- **Created**: [new files]
+- **Modified**: [changed files]
+- **Deleted**: [removed files]
+
+## Test plan
+- [ ] [Verification steps]
+
+---
+CLAUDE: <score>
+<justification>
+```
+
+The first line must always be the Jira issue link using the key extracted from the branch name. The `CLAUDE: X` line goes at the end, separated by a horizontal rule, so it's visually obvious and never confused with surrounding prose.
+
+Rules for the score block:
+- Line reads exactly `CLAUDE: <integer>` — capital `CLAUDE`, colon, single space, integer. This is the format the CI regex keys off; don't wrap it in backticks.
+- Justification (if any) goes on the very next line.
+- If the user skipped the score, omit the `---` separator and the score block entirely. (CI will fail until a `CLAUDE: X` is added, as warned in Step 3.)
+
+### Push the branch first
+
+Before creating the PR/MR, make sure the branch is on the remote:
+
+```bash
+git push -u origin <branch-name>
+```
+
+### Create the PR/MR
 
 **GitHub** (`$PLATFORM = github`):
 
 ```bash
-gh pr comment <pr-number> --body "CLAUDE: <score>
-<justification>"
+gh pr create \
+  --title "PROJ-XXX: <title>" \
+  --assignee <github-username> \
+  --reviewer <github-username> \
+  --body "$(cat <<'EOF'
+<body content including the CLAUDE: X block>
+EOF
+)"
 ```
 
 **GitLab** (`$PLATFORM = gitlab`):
 
 ```bash
-glab mr note <mr-iid> --message "CLAUDE: <score>
-<justification>"
+glab mr create \
+  --title "PROJ-XXX: <title>" \
+  --assignee <gitlab-username> \
+  --reviewer <gitlab-username> \
+  --source-branch "$(git branch --show-current)" \
+  --target-branch main \
+  --remove-source-branch \
+  --description "$(cat <<'EOF'
+<body content including the CLAUDE: X block>
+EOF
+)"
 ```
 
-If the user declined the justification, post just the score line:
+(On GitLab, swap `main` for the actual default branch if different — e.g., `master`, `develop`.)
 
-```bash
-# GitHub
-gh pr comment <pr-number> --body "CLAUDE: <score>"
+Save the PR/MR URL and its number/iid from the output — both are needed for the next step.
 
-# GitLab
-glab mr note <mr-iid> --message "CLAUDE: <score>"
-```
-
-The `CLAUDE: X` line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. The justification goes on a separate line so it doesn't confuse the regex.
-
-Confirm to the user: `✓ Posted CLAUDE: <score> on <pr-or-mr-url>`
-
-### If the user declines or skips
-
-If the user says "skip", "no", or passed `--no-claude-score`, show this warning and continue the workflow:
+Confirm to the user:
 
 ```
-⚠️  No Claude Impact Score posted.
-   CI will fail this PR/MR until a CLAUDE: X comment is added.
-   Post it manually with:
-     # GitHub
-     gh pr comment <pr-number> --body "CLAUDE: <score>"
-     # GitLab
-     glab mr note <mr-iid> --message "CLAUDE: <score>"
+✓ Opened <pr-or-mr-url>
+  CLAUDE: <score> embedded in description — CI will see it on the first run.
 ```
 
 ## Step 5 — Post JIRA Summary
@@ -301,7 +291,7 @@ Output a summary:
 ```
 Platform: <github|gitlab>
 PR/MR: <url>
-Claude Impact Score: <score> posted (or "skipped — post manually")
+Claude Impact Score: <score> (embedded in description)
 JIRA: PROJ-XXX comment posted (or "manual post needed")
 Assignee: <name>
 Reviewer: <name>
@@ -310,7 +300,7 @@ Reviewer: <name>
 ## Error Handling
 
 - **No commits on branch**: Warn and abort — nothing to ship.
-- **PR/MR already exists**: Show the existing URL. Ask if user wants to update the JIRA comment only.
+- **PR/MR already exists**: Show the existing URL. Ask if user wants to update the JIRA comment only. If the existing PR/MR lacks a score, offer to add it via `gh pr edit` / `glab mr update`.
 - **Push fails**: Show the error. Don't retry automatically.
 - **CLI not installed / not authenticated**: Stop with clear install + auth instructions (`gh auth login` / `glab auth login --hostname <host>`). Never silently fall back to the other platform.
 - **Platform auto-detection ambiguous**: If `origin` URL matches neither github.com nor any gitlab host, ask the user to pass `--platform`.
@@ -322,6 +312,6 @@ Reviewer: <name>
 - NEVER amend commits
 - NEVER skip pre-commit hooks
 - Always push before creating the PR/MR
-- Order is fixed: PR/MR → Claude Impact Score comment → JIRA summary. Each later step depends on the PR/MR URL / number.
-- The Claude Impact Score comment must be posted on the PR (GitHub) or MR (GitLab), not on a specific code line — CI only scans PR/MR-level comments and the PR/MR description.
+- Order is fixed: prompt for score → create PR/MR with score in body → JIRA summary. Prompting first and baking the score into the description means CI passes on the first run — no `issue_comment` re-trigger, no waiting for a reminder bot to notice, no extra pipeline spend.
+- The score line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. Keep it unwrapped (no backticks around it) so the CI regex matches cleanly.
 - Don't include sensitive info (API keys, tokens) in PR/MR or JIRA
