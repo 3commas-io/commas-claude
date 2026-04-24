@@ -27,17 +27,19 @@ Optional arguments override auto-detection:
 - `--no-jira` — skip JIRA summary
 - `--no-pr` — skip PR/MR creation (only post JIRA summary)
 - `--platform <github|gitlab>` — force platform detection (rarely needed; use only if auto-detection picks the wrong one)
-- `--slack-channel <name>` — post the review request to this Slack channel (overrides auto-detection)
+- `--slack-channel <name>` — post the review request to this Slack channel. Overrides the channel auto-picked in Step 5 (repo slug / file-extension majority / ask-the-user fallback).
 - `--no-slack` — skip the Slack review-request post
 - Bare argument — treated as JIRA issue key if it matches the project pattern
 
 ## Team Members
 
-**This section should be overridden in the project-level skill.** Map git usernames to platform handles and real names for auto-assigning:
+**This section should be overridden in the project-level skill.** Map git usernames to platform handles, Slack ID, and real names for auto-assigning and review-request pinging:
 
-| Git username | GitHub handle | GitLab handle | Name |
-|--------------|---------------|---------------|------|
-| `example-user` | `example-gh` | `example.gl` | Name |
+| Git username | GitHub handle | GitLab handle | Slack ID | Name |
+|--------------|---------------|---------------|----------|------|
+| `example-user` | `example-gh` | `example.gl` | `U01ABCDEFGH` | Name |
+
+The **Slack ID** (not display name) is what lets Step 5 tag assignees with a real `<@UXXXXXX>` mention so they get a native push notification.
 
 When the user says a name (e.g., "assign to me", "john reviews"), match it against the team list:
 - "me" / "myself" → resolve via `gh api user` (GitHub) or `glab api user` (GitLab) to get the current login
@@ -310,16 +312,18 @@ glab mr update <mr-iid> --assignee <gitlab-username>
 
 ### Compose the Slack message
 
-Short, scannable, link-first. Use the PR/MR title and URL, mention the reviewer.
+Short, scannable, link-first. **Tag the assignee with a real Slack mention** (`<@UXXXXXX>`) so they get a native push, not a plain-text name.
 
 ```
-*New review request* — <pr-or-mr-title>
+<@assignee-slack-id> — new review request on <pr-or-mr-title>
 <pr-or-mr-url>
-Reviewer: <@slack-id-or-handle>  •  Assignee: <@slack-id-or-handle>
-JIRA: <jira-browse-url>/<PROJ-XXX>
+Reviewer: <@reviewer-slack-id-or-name>  •  JIRA: <jira-browse-url>/<PROJ-XXX>
 ```
 
-If you have Slack user IDs in the team list, use `<@UXXXXXX>` so reviewers get a ping. Otherwise plain text names.
+Rules:
+- The assignee mention (`<@UXXXXXX>`) must be the very first token of the message. Slack treats it as a proper @-mention and will notify that user. Don't wrap it in code-span/backticks and don't use the plain `@name` form — those don't trigger pings.
+- The reviewer's Slack ID is nice-to-have but not required for pinging (the assignee is the one on the hook). If you have it, use `<@UYYYYYY>`; otherwise the GitHub/GitLab handle in plain text is fine.
+- The team list (Team Members section) should carry a `Slack ID` column alongside git/GitHub/GitLab handles so this lookup is one hop. If the assignee has no Slack ID on record, fall back to `@<handle>` as plain text and warn the user that the mention won't be a real ping.
 
 ### Post
 
