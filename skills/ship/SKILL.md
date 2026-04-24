@@ -268,28 +268,32 @@ After the PR/MR is created, confirm the assignment and (optionally) post a revie
 
 ### Pick the channel
 
-Default channels:
+The two main review channels at 3commas are:
 
 - `#frontend_code_review` — UI / web / mobile PRs
 - `#backend_code_review` — services / APIs / infra / shared libs
+
+Many repos don't have a dedicated review channel at all — and that's fine. Default to skip when we aren't confident, don't invent a destination.
 
 Precedence (short-circuit at the first hit):
 
 1. `--slack-channel <name>` explicit flag — use it, no question asked.
 2. **Repo-name heuristic (only when unambiguous)**: if the repo slug contains the substring `frontend`, pick `#frontend_code_review`; if it contains `backend`, pick `#backend_code_review`. Do this only when one of the two substrings appears cleanly (e.g., `app-3commas-frontend`, `quantpilot-agentic-backend`) — don't guess from weaker signals like file extensions. `.ts` is ambiguous (Node backends use it too).
-3. Otherwise — **ask the user**. Don't guess.
+3. Otherwise — **ask the user, with skip as the default**. Many repos simply don't have a review channel, so a plain Enter means no Slack post.
 
 The ask should be explicit and compact:
 
 ```
-Which channel should the review request go to?
-  → #frontend_code_review
-  → #backend_code_review
+Post a review request to Slack? (some repos don't have a channel — Enter to skip)
 
-Reply with the channel name (# optional) or "skip" to not post.
+  [1] #frontend_code_review
+  [2] #backend_code_review
+  [3] other — type the channel name
+
+[Enter = skip]:
 ```
 
-If the user types a custom channel name (e.g., `#data-eng`), accept it. If they type `skip`, behave as if `--no-slack` was passed.
+Accept `1`, `2`, a typed channel name (with or without `#`), or empty input (skip). Treat `skip` / `no` / `n` as empty input.
 
 Either way — auto-picked or asked — show the final channel before posting and let the user change it one last time if they want.
 
