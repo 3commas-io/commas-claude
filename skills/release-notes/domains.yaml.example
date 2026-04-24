@@ -1,0 +1,17 @@
+domains:
+  your-domain:
+    jira:
+      base_url: https://your-instance.atlassian.net
+      project: PROJ
+      done_statuses:
+        - Done
+        - Resolved
+        - Closed
+    slack:
+      channel: "#your-release-notes"
+    github:
+      org: your-org
+      repos:
+        - repo-one
+        - repo-two
+        - repo-three

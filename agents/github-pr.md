@@ -1,5 +1,5 @@
 ---
-name: github-pr2
+name: github-pr
 description: specialized agent that creates and updates GitHub pull requests using the `gh` CLI tool.
 model: sonnet
 ---

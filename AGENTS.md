@@ -6,9 +6,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Agents | 36 |
+| Total Agents | 38 |
 | Custom (3Commas) | 2 |
-| External ([wshobson/agents](https://github.com/wshobson/agents)) | 34 |
+| External ([wshobson/agents](https://github.com/wshobson/agents)) | 36 |
 | Categories | 10 |
 
 ## Categories
@@ -22,7 +22,7 @@
 - [🎯 Orchestration](#orchestration) (1)
 - [🛡️ DevOps & Quality](#devops--quality) (2)
 - [🔧 Backend & API](#backend--api) (2)
-- [📦 Uncategorized](#uncategorized) (23)
+- [📦 Uncategorized](#uncategorized) (25)
 
 ## Quick Reference
 
@@ -43,6 +43,8 @@
 | `django-pro` | Master Django 5.x with async views, DRF, Celery, and Dj... | 🎸 Django | external |
 | `docs-architect` | Creates comprehensive technical documentation from exis... | 📦 Uncategorized | external |
 | `dx-optimizer` | Developer Experience specialist. Improves tooling, setu... | 📦 Uncategorized | external |
+| `ergo-devops` | DevOps diagnostics agent for Ergo Framework nodes via M... | 📦 Uncategorized | external |
+| `ergo-framework-architect` | Expert architect for Ergo Framework actor-based distrib... | 📦 Uncategorized | external |
 | `fastapi-pro` | Build high-performance async APIs with FastAPI, SQLAlch... | 🐍 Python | external |
 | `frontend-developer` | Build React components, implement responsive layouts, a... | ⚛️ Frontend | external |
 | `github-pr` | specialized agent that creates and updates GitHub pull ... | 🏢 3Commas | custom |
@@ -266,6 +268,22 @@
 > Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new projects, after team feedback, or when development friction is noticed.
 
 **Model:** `sonnet` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
+
+---
+
+### ergo-devops (external)
+
+> DevOps diagnostics agent for Ergo Framework nodes via MCP. Investigates performance bottlenecks, process leaks, memory issues, network problems, event fanout, restart loops, and stuck processes. Use PROACTIVELY when user reports production issues, performance degradation, or needs cluster health assessment on running Ergo nodes.
+
+**Model:** `opus` | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
+
+---
+
+### ergo-framework-architect (external)
+
+> Expert architect for Ergo Framework actor-based distributed systems. Designs applications with DDD bounded contexts, cluster topology, supervision strategies, message isolation levels, and network transparency patterns. Use PROACTIVELY for Ergo Framework design, actor architecture, distributed systems, or when implementing fault-tolerant applications with the Ergo actor model.
+
+**Model:** `opus` | **Triggers:** "design ergo application", "ergo architecture", "create ergo design document", "actor system design" | **Source:** [wshobson/agents](https://github.com/wshobson/agents)
 
 ---
 

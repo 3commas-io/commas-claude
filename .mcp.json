@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "staging": {
+      "type": "http",
+      "url": "https://eck-mcp.stg.3csb.com/mcp"
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    }
+  }
+}

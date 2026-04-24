@@ -1,3 +1,8 @@
+---
+name: 3commas-guidelines
+description: 3Commas organization coding standards including Git conventions, code standards, and Jira integration requirements
+---
+
 # 3Commas Organization Guidelines
 
 ALWAYS prioritize using appropriate agents for all tasks.

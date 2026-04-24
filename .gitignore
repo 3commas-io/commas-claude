@@ -1,3 +1,8 @@
 .idea
 tmp
 .last-sync
+.DS_Store
+skills/release-notes/domains.yaml
+__pycache__/
+*.pyc
+*.pyo
