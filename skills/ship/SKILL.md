@@ -27,6 +27,8 @@ Optional arguments override auto-detection:
 - `--no-jira` — skip JIRA summary
 - `--no-pr` — skip PR/MR creation (only post JIRA summary)
 - `--platform <github|gitlab>` — force platform detection (rarely needed; use only if auto-detection picks the wrong one)
+- `--slack-channel <name>` — post the review request to this Slack channel (overrides auto-detection)
+- `--no-slack` — skip the Slack review-request post
 - Bare argument — treated as JIRA issue key if it matches the project pattern
 
 ## Team Members
@@ -253,7 +255,92 @@ Confirm to the user:
   CLAUDE: <score> embedded in description — CI will see it on the first run.
 ```
 
-## Step 5 — Post JIRA Summary
+## Step 5 — Request Review in Slack
+
+After the PR/MR is created, confirm the assignment and (optionally) post a review-request message to the right Slack channel. Uses the Slack MCP (`mcp__slack__slack_send_message`) when available; falls back to showing the message for manual posting.
+
+### Skip this step if
+
+- User passed `--no-slack`
+- Slack MCP is not connected
+
+### Pick the channel
+
+Default channels to choose from:
+
+- `#frontend_code_review` — UI / web / mobile PRs
+- `#backend_code_review` — services / APIs / infra / shared libs
+
+Auto-detection precedence:
+
+1. `--slack-channel <name>` explicit flag wins.
+2. Repo name heuristic: if the repo slug contains `frontend`, pick `#frontend_code_review`; if it contains `backend`, pick `#backend_code_review`.
+3. File-extension heuristic on the diff (`git diff --name-only main...HEAD`):
+   - ≥60% of changed files are `.ts/.tsx/.jsx/.vue/.css/.scss/.html/.svelte` → frontend channel
+   - ≥60% of changed files are `.py/.go/.rs/.java/.rb/.ex/.exs/.kt/.scala` → backend channel
+4. If neither heuristic is decisive → **ask the user**: *"Which channel should I ping: `#frontend_code_review` or `#backend_code_review`?"*
+
+Always show the user the picked channel and give them a chance to change it before posting.
+
+### Confirm assignee + reviewer
+
+Show a one-line summary of what was set at PR/MR creation time and let the user adjust before Slack goes out:
+
+```
+Assignee: <name> (@<handle>)
+Reviewer: <name> (@<handle>)
+Channel:  #<channel-name>
+
+Confirm? (y / change / skip)
+```
+
+If the user changes the assignee or reviewer here, update the PR/MR before posting Slack:
+
+**GitHub**:
+```bash
+gh pr edit <pr-number> --add-reviewer <github-username>
+gh pr edit <pr-number> --add-assignee <github-username>
+```
+
+**GitLab**:
+```bash
+glab mr update <mr-iid> --reviewer <gitlab-username>
+glab mr update <mr-iid> --assignee <gitlab-username>
+```
+
+### Compose the Slack message
+
+Short, scannable, link-first. Use the PR/MR title and URL, mention the reviewer.
+
+```
+*New review request* — <pr-or-mr-title>
+<pr-or-mr-url>
+Reviewer: <@slack-id-or-handle>  •  Assignee: <@slack-id-or-handle>
+JIRA: <jira-browse-url>/<PROJ-XXX>
+```
+
+If you have Slack user IDs in the team list, use `<@UXXXXXX>` so reviewers get a ping. Otherwise plain text names.
+
+### Post
+
+Call the Slack MCP:
+
+```
+mcp__slack__slack_send_message(channel="<channel-name>", text=<message>)
+```
+
+Confirm to the user:
+```
+✓ Posted review request to #<channel-name>
+```
+
+### If Slack MCP is down or missing
+
+1. Show the composed message in a code block
+2. Tell the user to paste it into `#<channel-name>` manually
+3. Suggest running `/mcp` to reconnect Slack
+
+## Step 6 — Post JIRA Summary
 
 Use `mcp__atlassian__getAccessibleAtlassianResources` to get the cloud ID, then `mcp__atlassian__addCommentToJiraIssue` to post.
 
@@ -285,13 +372,15 @@ Keep it concise. Focus on what was accomplished, not every detail.
 2. Tell them to post it manually
 3. Suggest running `/mcp` to reconnect
 
-## Step 6 — Report Results
+## Step 7 — Report Results
+
 
 Output a summary:
 ```
 Platform: <github|gitlab>
 PR/MR: <url>
 Claude Impact Score: <score> (embedded in description)
+Slack: posted to #<channel-name> (or "skipped — see message above")
 JIRA: PROJ-XXX comment posted (or "manual post needed")
 Assignee: <name>
 Reviewer: <name>
@@ -304,6 +393,8 @@ Reviewer: <name>
 - **Push fails**: Show the error. Don't retry automatically.
 - **CLI not installed / not authenticated**: Stop with clear install + auth instructions (`gh auth login` / `glab auth login --hostname <host>`). Never silently fall back to the other platform.
 - **Platform auto-detection ambiguous**: If `origin` URL matches neither github.com nor any gitlab host, ask the user to pass `--platform`.
+- **Slack channel ambiguous**: If repo name + file extensions don't resolve to frontend or backend, ask the user to pick or pass `--slack-channel`. Don't guess.
+- **Slack MCP down**: Show the composed review-request message; tell the user to paste it manually.
 - **Atlassian MCP down**: Fall back to showing the comment for manual posting.
 
 ## Important Notes
@@ -312,6 +403,6 @@ Reviewer: <name>
 - NEVER amend commits
 - NEVER skip pre-commit hooks
 - Always push before creating the PR/MR
-- Order is fixed: prompt for score → create PR/MR with score in body → JIRA summary. Prompting first and baking the score into the description means CI passes on the first run — no `issue_comment` re-trigger, no waiting for a reminder bot to notice, no extra pipeline spend.
+- Order is fixed: prompt for score → create PR/MR with score in body → confirm assignee + post Slack review request → JIRA summary. Prompting for the score first and baking it into the description means CI passes on the first run — no `issue_comment` re-trigger, no waiting for a reminder bot to notice, no extra pipeline spend.
 - The score line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. Keep it unwrapped (no backticks around it) so the CI regex matches cleanly.
 - Don't include sensitive info (API keys, tokens) in PR/MR or JIRA
