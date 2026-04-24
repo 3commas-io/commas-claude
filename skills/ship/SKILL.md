@@ -1,15 +1,17 @@
 ---
 name: ship
-description: Create a GitHub PR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Handles the full ship workflow — gather context, create PR, prompt for Claude Impact Score, post JIRA comment. Can be extended with project-specific team members and JIRA configuration.
+description: Create a GitHub PR or GitLab MR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Handles the full ship workflow — gather context, create PR/MR, prompt for Claude Impact Score, post JIRA comment. Works with both github.com (via `gh`) and GitLab instances (via `glab`). Can be extended with project-specific team members and JIRA configuration.
 ---
 
 # Ship Skill
 
-Create a GitHub PR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Order: PR first, then Claude Impact Score comment on the PR, then JIRA summary that references the PR.
+Create a GitHub PR or GitLab MR, capture a Claude Impact Score, and post a work summary to the JIRA issue. Order: PR/MR first, then Claude Impact Score comment, then JIRA summary that references the PR/MR.
+
+Platform is auto-detected from the `origin` remote — github.com → GitHub path (`gh` CLI), any `gitlab.*` host → GitLab path (`glab` CLI).
 
 ## When to Use
 
-- User says "ship", "create pr", "ship it", "pr + jira"
+- User says "ship", "create pr", "create mr", "ship it", "pr + jira", "mr + jira"
 - User invokes `/ship`
 - End of a feature branch workflow
 
@@ -19,23 +21,48 @@ Optional arguments override auto-detection:
 - `--reviewer <name>` or `-r <name>` — override reviewer (partial name match against team list)
 - `--assignee <name>` or `-a <name>` — override assignee
 - `--claude-score <N>` or `--score <N>` — pre-set the Claude Impact Score (skips the interactive prompt). Must be an integer in `-3..+3`.
-- `--no-claude-score` — skip the Claude Impact Score prompt entirely. CI will fail the PR until a `CLAUDE: X` comment is added manually.
+- `--no-claude-score` — skip the Claude Impact Score prompt entirely. CI will fail the PR/MR until a `CLAUDE: X` comment is added manually.
 - `--no-jira` — skip JIRA summary
-- `--no-pr` — skip PR creation (only post JIRA summary)
+- `--no-pr` — skip PR/MR creation (only post JIRA summary)
+- `--platform <github|gitlab>` — force platform detection (rarely needed; use only if auto-detection picks the wrong one)
 - Bare argument — treated as JIRA issue key if it matches the project pattern
 
 ## Team Members
 
-**This section should be overridden in the project-level skill.** Map git usernames to GitHub handles and real names for auto-assigning:
+**This section should be overridden in the project-level skill.** Map git usernames to platform handles and real names for auto-assigning:
 
-| Git / GitHub username | Name |
-|-----------------------|------|
-| `example-user`        | Name |
+| Git username | GitHub handle | GitLab handle | Name |
+|--------------|---------------|---------------|------|
+| `example-user` | `example-gh` | `example.gl` | Name |
 
 When the user says a name (e.g., "assign to me", "john reviews"), match it against the team list:
-- "me" / "myself" → resolve via `gh api user` to get the current GitHub login
+- "me" / "myself" → resolve via `gh api user` (GitHub) or `glab api user` (GitLab) to get the current login
 - Partial name match → e.g., "john" → `john-doe`
-- Exact GitHub username also accepted
+- Exact platform username also accepted
+
+Pick the handle from the column matching the detected platform.
+
+## Step 0 — Detect Platform
+
+Look at the `origin` remote URL to decide which CLI to use:
+
+```bash
+REMOTE_URL=$(git config --get remote.origin.url)
+case "$REMOTE_URL" in
+  *github.com*)      PLATFORM=github ;;
+  *gitlab.*|*gitlab*) PLATFORM=gitlab ;;
+  *) echo "Unknown remote host: $REMOTE_URL"; exit 1 ;;
+esac
+```
+
+If the user passed `--platform`, use that instead. The rest of the skill branches on `$PLATFORM`.
+
+Also confirm the matching CLI is installed and authenticated:
+
+- **GitHub**: `gh auth status` — must be logged in
+- **GitLab**: `glab auth status` — must be logged in to the correct host
+
+If the CLI is missing, tell the user exactly what to install (`brew install gh` / `brew install glab`) and where to get auth set up. Don't try to proceed.
 
 ## Step 1 — Gather Context
 
@@ -49,6 +76,8 @@ git diff main...HEAD --stat         # Full diff stat vs main
 git branch --show-current           # Current branch name
 ```
 
+(If the default branch isn't `main` — e.g., `master`, `develop` — substitute accordingly. Detect via `git symbolic-ref refs/remotes/origin/HEAD`.)
+
 Extract the JIRA issue key from:
 1. Explicit argument (e.g., `PROJ-82`)
 2. Branch name pattern: `feature/PROJ-XXX_...` or `fix/PROJ-XXX_...`
@@ -61,20 +90,20 @@ If `git status` shows uncommitted changes:
 - Ask if they want to commit first or proceed without those changes
 - Do NOT auto-commit
 
-## Step 3 — Create the PR
+## Step 3 — Create the PR/MR
 
 ### Determine assignee and reviewer
 
-- **Assignee**: Default to current `gh api user` login. Override with `--assignee` or if user says "assign to X".
+- **Assignee**: Default to current login. Resolve via `gh api user` (GitHub) or `glab api user` (GitLab). Override with `--assignee` or if user says "assign to X".
 - **Reviewer**: If not specified, pick the most likely reviewer from the team list (not the assignee). Override with `--reviewer`.
 
-### Build PR content
+### Build PR/MR content
 
 Analyze ALL commits on the branch (`git log main..HEAD`) and the full diff (`git diff main...HEAD`).
 
-**PR title**: Short (under 70 chars), imperative mood. Prefix with JIRA key: `PROJ-XXX: <description>`.
+**PR/MR title**: Short (under 70 chars), imperative mood. Prefix with JIRA key: `PROJ-XXX: <description>`.
 
-**PR body** format:
+**PR/MR body** format:
 
 ```markdown
 [PROJ-XXX](<jira-browse-url>/PROJ-XXX)
@@ -93,7 +122,17 @@ Analyze ALL commits on the branch (`git log main..HEAD`) and the full diff (`git
 
 The first line must always be the Jira issue link using the key extracted from the branch name.
 
-### Create the PR
+### Push the branch first
+
+Before creating the PR/MR, make sure the branch is on the remote:
+
+```bash
+git push -u origin <branch-name>
+```
+
+### Create the PR/MR
+
+**GitHub** (`$PLATFORM = github`):
 
 ```bash
 gh pr create \
@@ -106,17 +145,29 @@ EOF
 )"
 ```
 
-Push the branch first if it hasn't been pushed or is behind remote:
+**GitLab** (`$PLATFORM = gitlab`):
 
 ```bash
-git push -u origin <branch-name>
+glab mr create \
+  --title "PROJ-XXX: <title>" \
+  --assignee <gitlab-username> \
+  --reviewer <gitlab-username> \
+  --source-branch "$(git branch --show-current)" \
+  --target-branch main \
+  --remove-source-branch \
+  --description "$(cat <<'EOF'
+<body content>
+EOF
+)"
 ```
 
-Save the PR URL and number from the output — both are needed for the next steps.
+(On GitLab, swap `main` for the actual default branch if different — e.g., `master`, `develop`.)
+
+Save the PR/MR URL and its number/iid from the output — both are needed for the next steps.
 
 ## Step 4 — Ask for Claude Impact Score
 
-Every PR must carry a Claude Impact Score: a single integer from **-3** to **+3** that captures how much Claude contributed to the work. CI enforces this on every PR, so posting it here avoids a CI failure and a bot reminder comment.
+Every PR/MR must carry a Claude Impact Score: a single integer from **-3** to **+3** that captures how much Claude contributed to the work. CI enforces this on every PR/MR, so posting it here avoids a CI failure and a bot reminder comment.
 
 ### Skip this step if
 
@@ -168,22 +219,35 @@ Negative scores are valid and expected. Do not nudge the user upward — honest 
 
 ### Post the comment
 
-Post the `CLAUDE: X` line on its own, then append the justification (if any) on the next line:
+Post the `CLAUDE: X` line on its own, then append the justification (if any) on the next line.
+
+**GitHub** (`$PLATFORM = github`):
 
 ```bash
 gh pr comment <pr-number> --body "CLAUDE: <score>
 <justification>"
 ```
 
+**GitLab** (`$PLATFORM = gitlab`):
+
+```bash
+glab mr note <mr-iid> --message "CLAUDE: <score>
+<justification>"
+```
+
 If the user declined the justification, post just the score line:
 
 ```bash
+# GitHub
 gh pr comment <pr-number> --body "CLAUDE: <score>"
+
+# GitLab
+glab mr note <mr-iid> --message "CLAUDE: <score>"
 ```
 
 The `CLAUDE: X` line must match the CI-enforced format exactly: capital `CLAUDE`, colon, single space, integer. The justification goes on a separate line so it doesn't confuse the regex.
 
-Confirm to the user: `✓ Posted CLAUDE: <score> on <pr-url>`
+Confirm to the user: `✓ Posted CLAUDE: <score> on <pr-or-mr-url>`
 
 ### If the user declines or skips
 
@@ -191,9 +255,12 @@ If the user says "skip", "no", or passed `--no-claude-score`, show this warning 
 
 ```
 ⚠️  No Claude Impact Score posted.
-   CI will fail this PR until a CLAUDE: X comment is added.
+   CI will fail this PR/MR until a CLAUDE: X comment is added.
    Post it manually with:
+     # GitHub
      gh pr comment <pr-number> --body "CLAUDE: <score>"
+     # GitLab
+     glab mr note <mr-iid> --message "CLAUDE: <score>"
 ```
 
 ## Step 5 — Post JIRA Summary
@@ -217,7 +284,7 @@ Use `mcp__atlassian__getAccessibleAtlassianResources` to get the cloud ID, then 
 - All checks pass (typecheck, lint, stylelint, tests, knip)
 
 ### Links
-- PR: <pr-url>
+- PR/MR: <pr-or-mr-url>
 ```
 
 Keep it concise. Focus on what was accomplished, not every detail.
@@ -232,7 +299,8 @@ Keep it concise. Focus on what was accomplished, not every detail.
 
 Output a summary:
 ```
-PR: <url>
+Platform: <github|gitlab>
+PR/MR: <url>
 Claude Impact Score: <score> posted (or "skipped — post manually")
 JIRA: PROJ-XXX comment posted (or "manual post needed")
 Assignee: <name>
@@ -242,8 +310,10 @@ Reviewer: <name>
 ## Error Handling
 
 - **No commits on branch**: Warn and abort — nothing to ship.
-- **PR already exists**: Show the existing PR URL. Ask if user wants to update the JIRA comment only.
+- **PR/MR already exists**: Show the existing URL. Ask if user wants to update the JIRA comment only.
 - **Push fails**: Show the error. Don't retry automatically.
+- **CLI not installed / not authenticated**: Stop with clear install + auth instructions (`gh auth login` / `glab auth login --hostname <host>`). Never silently fall back to the other platform.
+- **Platform auto-detection ambiguous**: If `origin` URL matches neither github.com nor any gitlab host, ask the user to pass `--platform`.
 - **Atlassian MCP down**: Fall back to showing the comment for manual posting.
 
 ## Important Notes
@@ -251,7 +321,7 @@ Reviewer: <name>
 - NEVER force-push
 - NEVER amend commits
 - NEVER skip pre-commit hooks
-- Always push before creating the PR
-- Order is fixed: PR → Claude Impact Score comment → JIRA summary. Each later step depends on the PR URL / number.
-- The Claude Impact Score comment must be posted on the PR (GitHub) or MR (GitLab), not on a specific code line — CI only scans PR-level comments and the PR description.
-- Don't include sensitive info (API keys, tokens) in PR or JIRA
+- Always push before creating the PR/MR
+- Order is fixed: PR/MR → Claude Impact Score comment → JIRA summary. Each later step depends on the PR/MR URL / number.
+- The Claude Impact Score comment must be posted on the PR (GitHub) or MR (GitLab), not on a specific code line — CI only scans PR/MR-level comments and the PR/MR description.
+- Don't include sensitive info (API keys, tokens) in PR/MR or JIRA
