@@ -1,0 +1,16 @@
+name: Claude Impact Score
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  pull-requests: write
+  checks: write
+  contents: read
+
+jobs:
+  claude-impact-score:
+    uses: 3commas-io/github-actions-workflows/.github/workflows/claude-impact-score.yml@main
